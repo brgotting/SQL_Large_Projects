@@ -1,18 +1,7 @@
+CREATE DATABASE db_library
 USE [db_library]
-GO
 
-USE AdventureWorks2014
 
-DROP DATABASE db_library
-
-CREATE PROCEDURE [dbo].[Populate_db_library]
-AS
-BEGIN
-
-	IF EXISTS (SELECT 1 FROM INFORMATION_SCHEMA.TABLES)
-		DROP TABLE Library_Branch, Publisher, Books, Book_Copies, Book_Authors, Borrower, Book_Loans;
-
- 
 	CREATE TABLE Library_Branch (
 		BranchID INT PRIMARY KEY NOT NULL IDENTITY (1,1),
 		BranchName VARCHAR(50) NOT NULL,
@@ -74,6 +63,8 @@ BEGIN
 
 	/*Tables are functioning correctly */
 
+	/*Begin Population*/
+
 
 	INSERT INTO Library_Branch
 		(BranchName,BranchAddress)
@@ -125,7 +116,8 @@ SELECT * FROM Publisher
 		('Giacinto Marianna','8010 Buttonwood St. Annapolis, MD 21401','(519) 871-2465'),
 		('Peio Lev','886 Arlington Lane Dorchester Center, MA 02124','(362) 319-9222'),
 		('Annas Vicente','5 Addison Lane Matawan, NJ 07747','(854) 744-5768'),
-		('Olek Vivek','9 Chapel Court Taylors, SC 29687','(679) 495-4737')
+		('Olek Vivek','9 Chapel Court Taylors, SC 29687','(679) 495-4737'),
+		('Blake Gotting','35 SW 89th Ave','(503) 250-1130')
 	;
 
 	SELECT * FROM Borrower
@@ -369,16 +361,19 @@ SELECT * FROM Publisher
 		(22,4,8,'2019-04-03','2019-11-29')
 	;
 
-END
+	CREATE PROCEDURE Drill_1
+	AS
+	SELECT Book_Copies.Number_Of_Copies, Library_Branch.BranchName, Books.Title
+		FROM Book_Copies
+		INNER JOIN Library_Branch ON Library_branch.BranchID = Book_Copies.BranchID
+		INNER JOIN Books ON Books.BookID = Book_Copies.BookID
+		WHERE Library_Branch.BranchName = 'Sharpstone' AND Books.Title = 'The Lost Tribe'
 
-GO
-
+	CREATE PROCEDURE Drill 2
+	AS
+	SELECT
 	
-		
-
-
-
-
+	
 
 
 
