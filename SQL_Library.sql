@@ -435,7 +435,6 @@ SELECT * FROM Publisher
 	GROUP BY Title, AuthorName
 	
 
-
 	
 	
 
