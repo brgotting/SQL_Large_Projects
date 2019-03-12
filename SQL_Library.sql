@@ -358,8 +358,13 @@ SELECT * FROM Publisher
 		(22,1,5,'2019-04-03','2019-11-29'),
 		(22,2,6,'2019-04-03','2019-11-29'),
 		(22,3,7,'2019-04-03','2019-11-29'),
-		(22,4,8,'2019-04-03','2019-11-29')
+		(22,4,8,'2019-04-03','2019-11-29'),
+		(22,1,1,'2019-03-11','2019-11-29')
 	;
+
+	SELECT * FROM Book_Loans;
+
+
 
 	CREATE PROCEDURE Drill_1
 	AS
@@ -369,9 +374,68 @@ SELECT * FROM Publisher
 		INNER JOIN Books ON Books.BookID = Book_Copies.BookID
 		WHERE Library_Branch.BranchName = 'Sharpstone' AND Books.Title = 'The Lost Tribe'
 
-	CREATE PROCEDURE Drill 2
+		
+
+	CREATE PROCEDURE Drill_2
 	AS
-	SELECT
+	SELECT Book_Copies.Number_Of_Copies, Library_Branch.BranchName, Books.Title
+		FROM Book_Copies
+		INNER JOIN Library_Branch ON Library_branch.BranchID = Book_Copies.BranchID
+		INNER JOIN Books ON Books.BookID = Book_Copies.BookID
+		WHERE Books.Title = 'The Lost Tribe'
+
+	CREATE PROCEDURE Drill_3
+		AS
+		SELECT Borrower.BorrowerName
+		FROM Borrower
+		INNER JOIN Book_Loans ON Book_Loans.CardNo = Borrower.CardNo
+		WHERE Book_Loans.CardNo = NULL
+
+	/*No column on Borrower table indicating number of books checked out, can't use any value from book loans because only knows loaned books*/
+
+	SELECT * FROM Book_Loans
+
+	CREATE PROCEDURE Drill_4
+		AS
+		SELECT Books.Title, Borrower.BorrowerName, Borrower.BorrowerAddress
+		FROM Book_Loans
+		INNER JOIN Borrower ON Borrower.CardNo = Book_Loans.CardNo
+		INNER JOIN Books ON Books.BookID = Book_Loans.BookID
+		WHERE Book_Loans.BranchID = 1 AND Book_Loans.DateDue = (CONVERT(VARCHAR(10), getdate(), 111));
+
+		--- getdate() isn't functioning properly ---
+
+
+
+	CREATE PROCEDURE Drill_5
+	AS
+	SELECT Library_Branch.BranchName, COUNT(Book_Loans.BranchID) AS Loan_Amount
+	FROM Book_Loans
+	INNER JOIN Library_Branch ON Book_Loans.BranchID = Library_Branch.BranchID
+	GROUP BY BranchName
+
+
+
+	CREATE PROCEDURE Drill_6
+	AS
+	SELECT Borrower.BorrowerName, borrower.BorrowerAddress, COUNT(Book_Loans.CardNo) AS Loan_Amount
+	FROM Book_Loans
+	INNER JOIN Borrower ON Book_Loans.CardNo = Borrower.CardNo
+	GROUP BY BorrowerName, BorrowerAddress
+	HAVING COUNT(Book_Loans.CardNo) > 5
+
+
+	CREATE PROCEDURE Drill_7
+	AS
+	SELECT Books.Title, Book_Authors.AuthorName, COUNT(Book_Copies.BranchID) AS Loan_Amount
+	FROM Book_Copies 
+	INNER JOIN Books ON Book_Copies.BookID = Books.BookID
+	INNER JOIN Book_Authors ON Book_Copies.BookID  = Book_Authors.BookID
+	WHERE Book_Authors.AuthorName = 'Stephen King' AND Book_Copies.BranchID = 2
+	GROUP BY Title, AuthorName
+	
+
+
 	
 	
 
